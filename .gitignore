@@ -1,0 +1,9 @@
+build/
+traces/
+formal/*_prove/
+formal/*_cover/
+formal/*_bmc/
+formal/*_bug_*/
+__pycache__/
+*.vcd
+.DS_Store
