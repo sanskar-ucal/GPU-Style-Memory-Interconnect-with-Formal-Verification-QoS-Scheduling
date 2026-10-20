@@ -1,0 +1,27 @@
+name: verify
+
+on: [push, pull_request]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: YosysHQ/setup-oss-cad-suite@v3
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install matplotlib
+      - name: Lint
+        run: make lint
+      - name: Simulation regression
+        run: make test
+      - name: Formal (FIFO + arbiter proofs, fabric BMC)
+        run: make formal
+      - name: Bug-injection matrix (every known bug must be caught)
+        run: python3 scripts/bug_hunt.py --quick
+      - name: Performance sweep
+        run: make perf
+      - uses: actions/upload-artifact@v4
+        with:
+          name: reports
+          path: docs/

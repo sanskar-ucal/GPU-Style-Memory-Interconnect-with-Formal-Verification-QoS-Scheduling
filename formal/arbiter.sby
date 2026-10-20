@@ -1,0 +1,27 @@
+# Unbounded proof (k-induction) of QoS arbiter properties:
+#   one-hot grant (no duplicate grants), grant subset of request,
+#   work conservation, round-robin bounded wait (starvation freedom)
+[tasks]
+prove
+cover
+bug_arb_double_grant prove
+bug_rr_no_rotate prove
+
+[options]
+prove: mode prove
+prove: depth 8
+cover: mode cover
+cover: depth 16
+
+[engines]
+smtbmc yices
+
+[script]
+bug_arb_double_grant: read -define BUG_ARB_DOUBLE_GRANT
+bug_rr_no_rotate: read -define BUG_RR_NO_ROTATE
+read -formal qos_arbiter.sv
+chparam -set N 4 -set WW 3 qos_arbiter
+prep -top qos_arbiter
+
+[files]
+../rtl/qos_arbiter.sv
